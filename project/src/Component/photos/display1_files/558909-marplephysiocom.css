@@ -1,0 +1,19 @@
+#OBapp #pagination .page-link.selected {
+  color: #54565b;
+  background: #fdd700;
+}
+
+#OBapp button[type=submit].submit-large {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: #223a8f;
+  text-decoration: none;
+  cursor: pointer;
+  background: #fdd700;
+}
+
+#OBapp button[type=submit].submit-large:hover {
+  background: #ffdf27;
+}
