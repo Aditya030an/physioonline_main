@@ -48,22 +48,22 @@ export default function PhysiotherapyServices() {
 
       {/* HERO */}
 
-      <section className="relative min-h-[90vh] flex items-center pt-32 px-6 lg:px-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+      <section className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center pt-28 sm:pt-32 px-4 sm:px-6 lg:px-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
 
 {/* Background Accent Shapes */}
 
-<div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-[#00C4CD]/20 rounded-full blur-3xl"></div>
+<div className="absolute -top-40 -right-40 w-[260px] h-[260px] sm:w-[500px] sm:h-[500px] bg-[#00C4CD]/20 rounded-full blur-3xl"></div>
 
-<div className="absolute bottom-0 -left-40 w-[400px] h-[400px] bg-[#003A80]/10 rounded-full blur-3xl"></div>
+<div className="absolute bottom-0 -left-40 w-[240px] h-[240px] sm:w-[400px] sm:h-[400px] bg-[#003A80]/10 rounded-full blur-3xl"></div>
 
 
-<div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
+<div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
   {/* LEFT CONTENT */}
 
   <div>
 
-    <h1 className="text-5xl lg:text-6xl font-semibold leading-tight mb-6 text-[#003A80]">
+    <h1 className="text-3xl sm:text-4xl lg:text-6xl font-semibold leading-tight mb-6 text-[#003A80]">
 
       Restore Movement. <br />
 
@@ -73,7 +73,7 @@ export default function PhysiotherapyServices() {
 
     </h1>
 
-    <p className="text-lg text-gray-600 max-w-lg mb-10">
+    <p className="text-base sm:text-lg text-gray-600 max-w-lg mb-10">
       Expert physiotherapy and rehabilitation programs designed to
       relieve pain, restore mobility and improve quality of life
       through personalized treatment plans.
@@ -87,7 +87,7 @@ export default function PhysiotherapyServices() {
 
       <button
         onClick={() => navigate("/Appointment")}
-        className="px-8 py-4 border border-[#003A80] text-[#003A80] rounded-lg hover:bg-[#003A80] hover:text-white transition"
+        className="px-5 py-3 sm:px-8 sm:py-4 border border-[#003A80] text-[#003A80] rounded-lg hover:bg-[#003A80] hover:text-white transition"
       >
         Book Appointment
       </button>
@@ -97,20 +97,20 @@ export default function PhysiotherapyServices() {
 
     {/* TRUST STATS */}
 
-    <div className="flex gap-10 mt-12 text-sm text-gray-500">
+    <div className="grid grid-cols-3 gap-4 sm:gap-8 lg:gap-10 mt-10 lg:mt-12 text-sm text-gray-500">
 
       <div>
-        <p className="text-2xl font-semibold text-[#003A80]">10+</p>
+        <p className="text-xl sm:text-2xl font-semibold text-[#003A80]">10+</p>
         Years Experience
       </div>
 
       <div>
-        <p className="text-2xl font-semibold text-[#003A80]">1000+</p>
+        <p className="text-xl sm:text-2xl font-semibold text-[#003A80]">1000+</p>
         Patients Treated
       </div>
 
       <div>
-        <p className="text-2xl font-semibold text-[#003A80]">6+</p>
+        <p className="text-xl sm:text-2xl font-semibold text-[#003A80]">6+</p>
         Specialized Therapies
       </div>
 
@@ -123,7 +123,7 @@ export default function PhysiotherapyServices() {
 
   <div className="relative">
 
-  <div className="bg-gray-100 h-[420px] rounded-2xl shadow-inner overflow-hidden">
+  <div className="bg-gray-100 h-[260px] sm:h-[340px] lg:h-[420px] rounded-2xl shadow-inner overflow-hidden">
 
 <img
   src={banner}
@@ -136,7 +136,7 @@ export default function PhysiotherapyServices() {
 
     {/* Floating Card */}
 
-    <div className="absolute -bottom-8 -left-8 bg-white shadow-xl rounded-xl p-6 border">
+    <div className="hidden sm:block absolute -bottom-8 -left-4 lg:-left-8 bg-white shadow-xl rounded-xl p-6 border">
 
       <p className="text-sm text-gray-500">
         Recovery Success
@@ -156,11 +156,11 @@ export default function PhysiotherapyServices() {
 
       {/* SERVICES CARDS */}
 
-      <section className="py-24 px-6 lg:px-20 bg-gray-50">
+      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-20 bg-gray-50">
 
 <div className="max-w-4xl mb-16">
 
-  <h2 className="text-4xl lg:text-5xl font-semibold text-[#003A80] mb-4">
+  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#003A80] mb-4">
     Our Specializations
   </h2>
 
@@ -170,7 +170,7 @@ export default function PhysiotherapyServices() {
 
 </div>
 
-<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
 
   {services.map((service, index) => (
 
@@ -178,7 +178,7 @@ export default function PhysiotherapyServices() {
       key={index}
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
-      className="group bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition"
+      className="group bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition"
     >
 
       {/* ICON */}
@@ -189,7 +189,7 @@ export default function PhysiotherapyServices() {
 
       {/* TITLE */}
 
-      <h3 className="text-2xl font-semibold mb-3 text-[#003A80]">
+      <h3 className="text-xl sm:text-2xl font-semibold mb-3 text-[#003A80]">
         {service.title}
       </h3>
 
@@ -211,9 +211,9 @@ export default function PhysiotherapyServices() {
 
       {/* FEATURE SECTION */}
 
-      <section className="py-28 px-6 lg:px-20 bg-white">
+      <section className="py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-20 bg-white">
 
-<div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+<div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-center">
 
   {/* LEFT IMAGE */}
 
@@ -224,14 +224,14 @@ export default function PhysiotherapyServices() {
 <img
   src={personalized}
   alt="Physiotherapy Treatment"
-  className="w-full h-[420px] object-contain"
+  className="w-full h-[260px] sm:h-[340px] lg:h-[420px] object-contain"
 />
 
 </div>
 
     {/* Floating stat card */}
 
-    <div className="absolute -bottom-8 -right-8 bg-white shadow-xl rounded-xl p-6 border">
+    <div className="hidden sm:block absolute -bottom-8 -right-4 lg:-right-8 bg-white shadow-xl rounded-xl p-6 border">
 
       <p className="text-sm text-gray-500">Recovery Success</p>
 
@@ -248,7 +248,7 @@ export default function PhysiotherapyServices() {
 
   <div>
 
-    <h2 className="text-4xl lg:text-5xl font-semibold text-[#003A80] mb-6">
+    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#003A80] mb-6">
       Personalized Rehabilitation Programs
     </h2>
 
@@ -307,7 +307,7 @@ export default function PhysiotherapyServices() {
 
       {/* TREATMENT PROCESS */}
 
-      <section className="py-28 px-6 lg:px-20 bg-gray-50">
+      <section className="py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-20 bg-gray-50">
 
 <div className="max-w-7xl mx-auto">
 
@@ -315,7 +315,7 @@ export default function PhysiotherapyServices() {
 
   <div className="max-w-3xl mb-16">
 
-    <h2 className="text-4xl lg:text-5xl font-semibold text-[#003A80] mb-4">
+    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#003A80] mb-4">
       Why Choose Movement Rehab
     </h2>
 
@@ -327,15 +327,15 @@ export default function PhysiotherapyServices() {
 
   {/* Feature Cards */}
 
-  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
 
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="w-14 h-14 bg-[#00C4CD]/20 rounded-xl flex items-center justify-center text-[#003A80] text-2xl mb-6">
         ✓
       </div>
 
-      <h3 className="text-2xl font-semibold text-[#003A80] mb-3">
+      <h3 className="text-xl sm:text-2xl font-semibold text-[#003A80] mb-3">
         Expert Physiotherapists
       </h3>
 
@@ -347,13 +347,13 @@ export default function PhysiotherapyServices() {
     </div>
 
 
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="w-14 h-14 bg-[#00C4CD]/20 rounded-xl flex items-center justify-center text-[#003A80] text-2xl mb-6">
         ✓
       </div>
 
-      <h3 className="text-2xl font-semibold text-[#003A80] mb-3">
+      <h3 className="text-xl sm:text-2xl font-semibold text-[#003A80] mb-3">
         Personalized Treatment
       </h3>
 
@@ -365,13 +365,13 @@ export default function PhysiotherapyServices() {
     </div>
 
 
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="w-14 h-14 bg-[#00C4CD]/20 rounded-xl flex items-center justify-center text-[#003A80] text-2xl mb-6">
         ✓
       </div>
 
-      <h3 className="text-2xl font-semibold text-[#003A80] mb-3">
+      <h3 className="text-xl sm:text-2xl font-semibold text-[#003A80] mb-3">
         Modern Rehabilitation Methods
       </h3>
 
@@ -383,13 +383,13 @@ export default function PhysiotherapyServices() {
     </div>
 
 
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="w-14 h-14 bg-[#00C4CD]/20 rounded-xl flex items-center justify-center text-[#003A80] text-2xl mb-6">
         ✓
       </div>
 
-      <h3 className="text-2xl font-semibold text-[#003A80] mb-3">
+      <h3 className="text-xl sm:text-2xl font-semibold text-[#003A80] mb-3">
         Faster Recovery
       </h3>
 
@@ -401,13 +401,13 @@ export default function PhysiotherapyServices() {
     </div>
 
 
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="w-14 h-14 bg-[#00C4CD]/20 rounded-xl flex items-center justify-center text-[#003A80] text-2xl mb-6">
         ✓
       </div>
 
-      <h3 className="text-2xl font-semibold text-[#003A80] mb-3">
+      <h3 className="text-xl sm:text-2xl font-semibold text-[#003A80] mb-3">
         Holistic Care
       </h3>
 
@@ -419,13 +419,13 @@ export default function PhysiotherapyServices() {
     </div>
 
 
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="w-14 h-14 bg-[#00C4CD]/20 rounded-xl flex items-center justify-center text-[#003A80] text-2xl mb-6">
         ✓
       </div>
 
-      <h3 className="text-2xl font-semibold text-[#003A80] mb-3">
+      <h3 className="text-xl sm:text-2xl font-semibold text-[#003A80] mb-3">
         Continuous Monitoring
       </h3>
 
@@ -443,9 +443,9 @@ export default function PhysiotherapyServices() {
 </section>
 
       {/* CTA */}
-      <section className="py-28 px-6 lg:px-20 bg-gray-50">
+      <section className="py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-20 bg-gray-50">
 
-<div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-100">
+<div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 sm:p-10 lg:p-12 text-center border border-gray-100">
 
   <h2 className="text-4xl font-semibold text-[#003A80] mb-4">
     Start Your Recovery Today
@@ -460,7 +460,7 @@ export default function PhysiotherapyServices() {
 
   <button
   onClick={() => navigate("/Appointment")}
-  className="px-8 py-4 border border-[#003A80] text-[#003A80] rounded-lg hover:bg-[#003A80] hover:text-white transition"
+  className="px-5 py-3 sm:px-8 sm:py-4 border border-[#003A80] text-[#003A80] rounded-lg hover:bg-[#003A80] hover:text-white transition"
 >
   Book Appointment
 </button>

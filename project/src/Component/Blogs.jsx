@@ -65,13 +65,13 @@ const BlogPage = () => {
 
       {/* HERO */}
 
-      <section className="pt-36 pb-24 px-6 lg:px-20 bg-gray-50 text-center">
+      <section className="pt-28 sm:pt-32 lg:pt-36 pb-14 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-20 bg-gray-50 text-center">
 
         <p className="text-[#00C4CD] font-semibold mb-3">
           OUR BLOG
         </p>
 
-        <h1 className="text-5xl font-semibold text-[#003A80] mb-6">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#003A80] mb-6">
           Physiotherapy Insights & Health Tips
         </h1>
 
@@ -99,14 +99,14 @@ const BlogPage = () => {
 
       {/* FEATURED BLOG */}
 
-      <section className="py-20 px-6 lg:px-20">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-20">
 
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center">
 
           <img
             src={blogs[0].image}
             alt="Featured Blog"
-            className="rounded-2xl shadow-lg w-full h-[380px] object-cover"
+            className="rounded-2xl shadow-lg w-full h-[240px] sm:h-[320px] lg:h-[380px] object-cover"
           />
 
           <div>
@@ -115,7 +115,7 @@ const BlogPage = () => {
               Featured Article
             </p>
 
-            <h2 className="text-3xl font-semibold text-[#003A80] mb-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-[#003A80] mb-4">
               {blogs[0].title}
             </h2>
 
@@ -136,9 +136,9 @@ const BlogPage = () => {
 
       {/* BLOG GRID */}
 
-      <section className="pb-32 px-6 lg:px-20">
+      <section className="pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-20">
 
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-12">
 
           {filteredBlogs.map((blog) => (
 
@@ -150,7 +150,7 @@ const BlogPage = () => {
               <img
                 src={blog.image}
                 alt="blog"
-                className="w-full h-[220px] object-cover"
+                className="w-full h-[200px] sm:h-[220px] object-cover"
               />
 
               <div className="p-6">
@@ -184,9 +184,9 @@ const BlogPage = () => {
 
       {/* CTA */}
 
-      <section className="py-24 bg-gray-50 text-center">
+      <section className="py-16 sm:py-24 bg-gray-50 text-center px-4 sm:px-6">
 
-        <h2 className="text-4xl font-semibold text-[#003A80] mb-4">
+        <h2 className="text-3xl sm:text-4xl font-semibold text-[#003A80] mb-4">
           Need Professional Physiotherapy Advice?
         </h2>
 
@@ -195,7 +195,7 @@ const BlogPage = () => {
         </p>
 
         <button
-          onClick={() => navigate("/Book")}
+          onClick={() => navigate("/Appointment")}
           className="px-8 py-4 bg-[#003A80] text-white rounded-lg hover:bg-[#002c63] transition"
         >
           Book Consultation

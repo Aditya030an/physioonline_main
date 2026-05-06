@@ -54,14 +54,9 @@ const PhysioAppointmentForm = () => {
     let newErrors = {};
 
     if (step === 1) {
-      if (!formData.patientName.trim())
+      if (!formData.patientName.trim()) {
         newErrors.patientName = "Patient name is required";
-      if (!formData.age) newErrors.age = "Age is required";
-      if (formData.age && (formData.age < 1 || formData.age > 120)) {
-        newErrors.age = "Enter valid age";
       }
-      if (!formData.gender) newErrors.gender = "Gender is required";
-      if (!formData.visitType) newErrors.visitType = "Visit type is required";
 
       if (!formData.mobile) {
         newErrors.mobile = "Mobile number is required";
@@ -69,29 +64,38 @@ const PhysioAppointmentForm = () => {
         newErrors.mobile = "Enter valid 10 digit mobile number";
       }
 
-      if (!formData.email) {
-        newErrors.email = "Email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      if (
+        formData.email &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+      ) {
         newErrors.email = "Enter valid email";
       }
     }
 
     if (step === 2) {
-      if (!formData.appointmentDate)
+      if (!formData.appointmentDate) {
         newErrors.appointmentDate = "Date is required";
+      }
 
       if (formData.appointmentDate && formData.appointmentDate < today) {
         newErrors.appointmentDate = "Past date is not allowed";
       }
 
-      if (!formData.mode) newErrors.mode = "Mode is required";
-      if (!formData.timeSlot) newErrors.timeSlot = "Time slot is required";
+      if (!formData.mode) {
+        newErrors.mode = "Mode is required";
+      }
+
+      if (!formData.timeSlot) {
+        newErrors.timeSlot = "Time slot is required";
+      } else if (isPastTimeSlot(formData.timeSlot)) {
+        newErrors.timeSlot = "Past time slot is not allowed";
+      }
     }
 
     if (step === 3) {
-      if (!formData.complaint.trim())
+      if (!formData.complaint.trim()) {
         newErrors.complaint = "Complaint is required";
-      if (!formData.duration) newErrors.duration = "Duration is required";
+      }
     }
 
     if (step === 5) {
@@ -100,10 +104,6 @@ const PhysioAppointmentForm = () => {
         if (!formData.city.trim()) newErrors.city = "City is required";
         if (!formData.landmark.trim())
           newErrors.landmark = "Landmark is required";
-      }
-
-      if (!formData.agree) {
-        newErrors.agree = "Please accept treatment policies";
       }
     }
 
@@ -129,21 +129,28 @@ const PhysioAppointmentForm = () => {
 
     if (value === "Clinic Visit") {
       setTimeSlots([
-        "10:00 AM",
-        "10:30 AM",
-        "11:00 AM",
-        "11:30 AM",
-        "12:00 PM",
-        "12:30 PM",
-        "01:00 PM",
-        "06:00 PM",
-        "06:30 PM",
-        "07:00 PM",
-        "07:30 PM",
-        "08:00 PM",
+        // Morning - Movement Rehab Center
+        { time: "10:00 AM", clinic: "Movement Rehab Center" },
+        { time: "10:30 AM", clinic: "Movement Rehab Center" },
+        { time: "11:00 AM", clinic: "Movement Rehab Center" },
+        { time: "11:30 AM", clinic: "Movement Rehab Center" },
+        { time: "12:00 PM", clinic: "Movement Rehab Center" },
+        { time: "12:30 PM", clinic: "Movement Rehab Center" },
+        { time: "01:00 PM", clinic: "Movement Rehab Center" },
+
+        // Evening - MAYA'S BODY CARE
+        { time: "06:00 PM", clinic: "MAYA'S BODY CARE" },
+        { time: "06:30 PM", clinic: "MAYA'S BODY CARE" },
+        { time: "07:00 PM", clinic: "MAYA'S BODY CARE" },
+        { time: "07:30 PM", clinic: "MAYA'S BODY CARE" },
+        { time: "08:00 PM", clinic: "MAYA'S BODY CARE" },
       ]);
     } else if (value === "Home Visit") {
-      setTimeSlots(["02:00 PM", "03:30 PM", "05:00 PM"]);
+      setTimeSlots([
+        { time: "02:00 PM" },
+        { time: "03:30 PM" },
+        { time: "05:00 PM" },
+      ]);
     } else if (value === "Online Consultation") {
       const slots = [];
 
@@ -157,6 +164,37 @@ const PhysioAppointmentForm = () => {
     } else {
       setTimeSlots([]);
     }
+  };
+
+  const getSlotTime = (slot) => {
+    return typeof slot === "string" ? slot : slot.time;
+  };
+
+  const convertSlotToMinutes = (time) => {
+    const [rawTime, modifier] = time.split(" ");
+    let [hours, minutes] = rawTime.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    return hours * 60 + minutes;
+  };
+
+  const isPastTimeSlot = (slot) => {
+    if (!formData.appointmentDate) return false;
+
+    const selectedDate = formData.appointmentDate;
+    const todayDate = new Date().toISOString().split("T")[0];
+
+    if (selectedDate !== todayDate) return false;
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    const slotTime = getSlotTime(slot);
+    const slotMinutes = convertSlotToMinutes(slotTime);
+
+    return slotMinutes <= currentMinutes;
   };
 
   const handleSubmit = async () => {
@@ -206,10 +244,10 @@ const PhysioAppointmentForm = () => {
   }
 
   return (
-    <section className="min-h-screen pt-28 bg-gray-100 px-4 md:px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-10 text-center md:text-left">
-          <h1 className="text-3xl md:text-4xl font-semibold">
+    <section className="min-h-screen bg-gray-100 px-4 pt-24 pb-10 sm:px-6 lg:pt-32">
+      <div className="max-w-6xl mx-auto w-full">
+        <div className="mb-8 text-center md:text-left">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold">
             Movement Rehab Physiotherapy Consultation
           </h1>
 
@@ -218,13 +256,13 @@ const PhysioAppointmentForm = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg grid md:grid-cols-3 overflow-hidden min-h-[500px]">
+        <div className="bg-white rounded-2xl shadow-lg grid grid-cols-1 md:grid-cols-3 overflow-hidden">
           {/* SIDEBAR */}
 
-          <div className="hidden md:block bg-[#0f172a] text-white p-10">
+          <div className="bg-[#0f172a] text-white p-5 sm:p-6 md:p-8 lg:p-10">
             <h2 className="text-xl font-semibold mb-8">Appointment Steps</h2>
 
-            <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 md:block md:space-y-6">
               {[
                 "Patient Details",
                 "Appointment",
@@ -237,15 +275,15 @@ const PhysioAppointmentForm = () => {
                 return (
                   <div
                     key={index}
-                    className={`flex items-center gap-4 ${
+                    className={`flex items-center gap-2 md:gap-4 ${
                       step === number ? "opacity-100" : "opacity-50"
                     }`}
                   >
-                    <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm">
+                    <div className="w-7 h-7 shrink-0 bg-white text-black rounded-full flex items-center justify-center text-sm">
                       {number}
                     </div>
 
-                    <span>{label}</span>
+                    <span className="text-xs sm:text-sm md:text-base">{label}</span>
                   </div>
                 );
               })}
@@ -254,7 +292,7 @@ const PhysioAppointmentForm = () => {
 
           {/* FORM */}
 
-          <div className="md:col-span-2 p-6 md:p-12 overflow-y-auto max-h-[500px]">
+          <div className="md:col-span-2 p-5 sm:p-6 md:p-10 lg:p-12">
             {/* STEP 1 */}
 
             {step === 1 && (
@@ -263,14 +301,17 @@ const PhysioAppointmentForm = () => {
                   Basic Patient Details
                 </h2>
 
-                <div className="grid md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <input
                     name="patientName"
                     value={formData.patientName}
                     onChange={handleChange}
                     placeholder="Patient Name"
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
+                  {errors.patientName && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.patientName}</p>
+                  )}
 
                   <input
                     name="age"
@@ -278,14 +319,15 @@ const PhysioAppointmentForm = () => {
                     onChange={handleChange}
                     type="number"
                     placeholder="Age"
-                    className="border rounded-lg p-3"
+                    min={0}
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
 
                   <select
                     name="gender"
                     value={formData.gender}
                     onChange={handleChange}
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   >
                     <option value="">Gender</option>
                     <option value="Male">Male</option>
@@ -296,7 +338,7 @@ const PhysioAppointmentForm = () => {
                     name="visitType"
                     value={formData.visitType}
                     onChange={handleChange}
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   >
                     <option value="">First Visit / Follow-up</option>
                     <option value="First Visit">First Visit</option>
@@ -309,10 +351,10 @@ const PhysioAppointmentForm = () => {
                     onChange={handleChange}
                     maxLength="10"
                     placeholder="Mobile Number"
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
                   {errors.mobile && (
-                    <p className="text-red-500 text-sm">{errors.mobile}</p>
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.mobile}</p>
                   )}
 
                   <input
@@ -320,13 +362,12 @@ const PhysioAppointmentForm = () => {
                     value={formData.email}
                     onChange={handleChange}
                     type="email"
-                    required
                     placeholder="Email ID"
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )}
+                  {/* {errors.email && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.email}</p>
+                  )} */}
                 </div>
               </div>
             )}
@@ -339,16 +380,17 @@ const PhysioAppointmentForm = () => {
                   Appointment Details
                 </h2>
 
-                <div className="grid md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <input
                     name="appointmentDate"
                     value={formData.appointmentDate}
                     onChange={handleChange}
                     type="date"
-                    className="border rounded-lg p-3"
+                    min={today}
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
                   {errors.appointmentDate && (
-                    <p className="text-red-500 text-sm">
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
                       {errors.appointmentDate}
                     </p>
                   )}
@@ -357,7 +399,7 @@ const PhysioAppointmentForm = () => {
                     name="mode"
                     value={formData.mode}
                     onChange={(e) => handleModeChange(e.target.value)}
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   >
                     <option value="">Select Mode</option>
                     <option value="Clinic Visit">Clinic Visit</option>
@@ -367,21 +409,110 @@ const PhysioAppointmentForm = () => {
                     </option>
                   </select>
 
-                  <select
+                  {/* <select
                     name="timeSlot"
                     value={formData.timeSlot}
                     onChange={handleChange}
                     disabled={!formData.mode}
-                    className="border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   >
                     <option value="">Select Time Slot</option>
 
-                    {timeSlots.map((slot, index) => (
-                      <option key={index} value={slot}>
-                        {slot}
-                      </option>
-                    ))}
+                    {mode === "Clinic Visit" ? (
+                      <>
+                        <optgroup label="Morning - MOVEMENT REHAB CENTER">
+                          {timeSlots
+                            .filter(
+                              (slot) => slot.clinic === "Movement Rehab Center",
+                            )
+                            .map((slot, i) => (
+                              <option key={i}>{slot.time}</option>
+                            ))}
+                        </optgroup>
+
+                        <optgroup label="Evening - MAYA'S BODY CARE">
+                          {timeSlots
+                            .filter(
+                              (slot) => slot.clinic === "MAYA'S BODY CARE",
+                            )
+                            .map((slot, i) => (
+                              <option key={i}>{slot.time}</option>
+                            ))}
+                        </optgroup>
+                      </>
+                    ) : (
+                      timeSlots.map((slot, i) => (
+                        <option key={i}>{slot.time}</option>
+                      ))
+                    )}
+                  </select> */}
+
+                  <select
+                    name="timeSlot"
+                    value={formData.timeSlot}
+                    onChange={handleChange}
+                    disabled={!formData.mode || !formData.appointmentDate}
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                  >
+                    <option value="">Select Time Slot</option>
+
+                    {mode === "Clinic Visit" ? (
+                      <>
+                        <optgroup label="Morning - MOVEMENT REHAB CENTER">
+                          {timeSlots
+                            .filter(
+                              (slot) => slot.clinic === "Movement Rehab Center",
+                            )
+                            .map((slot, i) => (
+                              <option
+                                key={i}
+                                value={slot.time}
+                                disabled={isPastTimeSlot(slot)}
+                              >
+                                {slot.time}{" "}
+                                {isPastTimeSlot(slot) ? "(Not available)" : ""}
+                              </option>
+                            ))}
+                        </optgroup>
+
+                        <optgroup label="Evening - MAYA'S BODY CARE">
+                          {timeSlots
+                            .filter(
+                              (slot) => slot.clinic === "MAYA'S BODY CARE",
+                            )
+                            .map((slot, i) => (
+                              <option
+                                key={i}
+                                value={slot.time}
+                                disabled={isPastTimeSlot(slot)}
+                              >
+                                {slot.time}{" "}
+                                {isPastTimeSlot(slot) ? "(Not available)" : ""}
+                              </option>
+                            ))}
+                        </optgroup>
+                      </>
+                    ) : (
+                      timeSlots.map((slot, i) => {
+                        const slotTime = getSlotTime(slot);
+
+                        return (
+                          <option
+                            key={i}
+                            value={slotTime}
+                            disabled={isPastTimeSlot(slot)}
+                          >
+                            {slotTime}{" "}
+                            {isPastTimeSlot(slot) ? "(Not available)" : ""}
+                          </option>
+                        );
+                      })
+                    )}
                   </select>
+
+                  {errors.timeSlot && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.timeSlot}</p>
+                  )}
                 </div>
               </div>
             )}
@@ -400,14 +531,17 @@ const PhysioAppointmentForm = () => {
                     value={formData.complaint}
                     onChange={handleChange}
                     placeholder="Problem / Complaint"
-                    className="w-full border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
+                  {errors.complaint && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.complaint}</p>
+                  )}
 
                   <select
                     name="duration"
                     value={formData.duration}
                     onChange={handleChange}
-                    className="w-full border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   >
                     <option value="">Duration of Problem</option>
                     <option value="Days">Days</option>
@@ -420,7 +554,7 @@ const PhysioAppointmentForm = () => {
                     value={formData.diagnosis}
                     onChange={handleChange}
                     placeholder="Diagnosis"
-                    className="w-full border rounded-lg p-3"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
                 </div>
               </div>
@@ -434,7 +568,7 @@ const PhysioAppointmentForm = () => {
                   Functional Information
                 </h2>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     "Walking Difficulty",
                     "Sitting Difficulty",
@@ -443,7 +577,7 @@ const PhysioAppointmentForm = () => {
                   ].map((item) => (
                     <label
                       key={item}
-                      className="border rounded-lg p-4 flex items-center gap-3"
+                      className="border rounded-lg p-4 flex items-center gap-3 text-sm sm:text-base"
                     >
                       <input
                         type="checkbox"
@@ -486,30 +620,40 @@ const PhysioAppointmentForm = () => {
                       value={formData.address}
                       onChange={handleChange}
                       placeholder="Address"
-                      className="w-full border rounded-lg p-3"
+                      className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                     />
+                    {errors.address && (
+                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.address}</p>
+                    )}
 
                     <input
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
                       placeholder="City"
-                      className="w-full border rounded-lg p-3"
+                      className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                     />
+                    {errors.city && (
+                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.city}</p>
+                    )}
 
                     <input
                       name="landmark"
                       value={formData.landmark}
                       onChange={handleChange}
                       placeholder="Landmark"
-                      className="w-full border rounded-lg p-3"
+                      className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                     />
+
+                    {errors.landmark && (
+                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.landmark}</p>
+                    )}
                   </div>
                 )}
 
-                <input type="file" className="mb-6" />
+                <input type="file" className="mb-6 w-full rounded-lg border p-3" />
 
-                <label className="flex gap-3 mb-8">
+                <label className="flex items-start gap-3 mb-8 text-sm sm:text-base">
                   <input
                     name="agree"
                     type="checkbox"
@@ -522,7 +666,7 @@ const PhysioAppointmentForm = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="bg-black text-white px-8 py-3 rounded-lg disabled:opacity-60"
+                  className="w-full sm:w-auto bg-[#003A80] text-white px-8 py-3 rounded-lg disabled:opacity-60 hover:bg-[#002a5e]"
                 >
                   {loading ? "Submitting..." : "Submit Appointment"}
                 </button>
@@ -531,9 +675,9 @@ const PhysioAppointmentForm = () => {
 
             {/* NAVIGATION */}
 
-            <div className="flex justify-between mt-10">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between mt-10">
               {step > 1 && (
-                <button onClick={back} className="border px-6 py-2 rounded-lg">
+                <button onClick={back} className="w-full sm:w-auto border px-6 py-3 rounded-lg">
                   Back
                 </button>
               )}
@@ -541,7 +685,7 @@ const PhysioAppointmentForm = () => {
               {step < 5 && (
                 <button
                   onClick={next}
-                  className="bg-black text-white px-6 py-2 rounded-lg"
+                  className="w-full sm:w-auto bg-[#003A80] text-white px-6 py-3 rounded-lg hover:bg-[#002a5e]"
                 >
                   Next
                 </button>

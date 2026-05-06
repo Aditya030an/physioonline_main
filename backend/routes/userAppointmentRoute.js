@@ -1,14 +1,17 @@
-import express from 'express';
-import authUser from '../middleware/auth.js';
+import express from "express";
+import authUser from "../middleware/auth.js";
 import { google } from "googleapis";
-import { createUserBookingAppointment, getUserBookingAppointment } from '../controllers/userBookingAppointmentController.js';
+import {
+  createUserBookingAppointment,
+  getUserBookingAppointment,
+} from "../controllers/userBookingAppointmentController.js";
 
 const userAppointmentRouter = express.Router();
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
+  process.env.GOOGLE_REDIRECT_URI,
 );
 
 oauth2Client.setCredentials({
@@ -36,17 +39,70 @@ const convertTo24Hour = (time) => {
 };
 
 // Route to create a new appointment
-userAppointmentRouter.post("/createAppointment" ,authUser, createUserBookingAppointment);
-userAppointmentRouter.get("/getUserBookingAppointment" , authUser, getUserBookingAppointment);
+userAppointmentRouter.post(
+  "/createAppointment",
+  authUser,
+  createUserBookingAppointment,
+);
+userAppointmentRouter.get(
+  "/getUserBookingAppointment",
+  authUser,
+  getUserBookingAppointment,
+);
 userAppointmentRouter.post("/book", async (req, res) => {
   try {
     const data = req.body;
 
-    console.log("response data" , data);
+    console.log("response data", data);
+
+    if (!data.patientName || !data.mobile || !data.complaint) {
+      return res.status(400).json({
+        success: false,
+        message: "Patient name, mobile number and complaint are required",
+      });
+    }
+
+    if (!/^[6-9]\d{9}$/.test(data.mobile)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter valid 10 digit mobile number",
+      });
+    }
+
+    if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter valid email",
+      });
+    }
+
+    if (data.mode === "Home Visit") {
+      if (!data.address || !data.city || !data.landmark) {
+        return res.status(400).json({
+          success: false,
+          message: "Address, city and landmark are required for home visit",
+        });
+      }
+    }
+
+    if (!data.appointmentDate || !data.mode || !data.timeSlot) {
+      return res.status(400).json({
+        success: false,
+        message: "Appointment date, mode and time slot are required",
+      });
+    }
+
+    const attendees = [{ email: process.env.OWNER_EMAIL }];
+
+    if (data.email && data.email.trim()) {
+      attendees.push({ email: data.email.trim() });
+    }
 
     const time24 = convertTo24Hour(data.timeSlot);
 
-    const startDateTime = new Date(`${data.appointmentDate}T${time24}:00+05:30`);
+    const startDateTime = new Date(
+      `${data.appointmentDate}T${time24}:00+05:30`,
+    );
     const endDateTime = new Date(startDateTime.getTime() + 30 * 60000);
 
     const event = {
@@ -56,7 +112,7 @@ Patient Name: ${data.patientName}
 Age: ${data.age}
 Gender: ${data.gender}
 Mobile: ${data.mobile}
-Email: ${data.email}
+Email: ${data.email || "Not provided"}
 
 Mode: ${data.mode}
 Visit Type: ${data.visitType}
@@ -77,10 +133,7 @@ Landmark: ${data.landmark || ""}
         dateTime: endDateTime.toISOString(),
         timeZone: "Asia/Kolkata",
       },
-      attendees: [
-        { email: process.env.OWNER_EMAIL },
-        { email: data.email },
-      ],
+      attendees,
       reminders: {
         useDefault: false,
         overrides: [
@@ -96,7 +149,7 @@ Landmark: ${data.landmark || ""}
       sendUpdates: "all",
     });
 
-    console.log("resp" , response.data.htmlLink)
+    console.log("resp", response.data.htmlLink);
 
     res.status(201).json({
       success: true,

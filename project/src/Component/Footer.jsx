@@ -4,9 +4,9 @@ import { FaFacebookF, FaEnvelope,FaArrowRight,FaPhoneAlt , FaInstagram,  FaWhats
 import { Link } from "react-router-dom"
 const Footer = () => {
   return (
-    <footer className="relative bg-gray-50 text-gray-700 pt-20 pb-10 border-t">
+    <footer className="relative bg-gray-50 text-gray-700 pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 border-t">
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
 
         {/* Clinic Info */}
         <motion.div
@@ -14,13 +14,12 @@ const Footer = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl font-bold text-[#003A80]">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#003A80]">
             Movement Rehab
           </h2>
 
           <p className="mt-3 text-sm text-gray-600">
-            Professional physiotherapy care focused on recovery,
-            mobility improvement and long-term wellness.
+          Expert physiotherapy care for recovery, mobility, and long-term wellness.
           </p>
         </motion.div>
 
@@ -141,7 +140,7 @@ const Footer = () => {
 
 
       {/* Social Media */}
-      <div className="flex justify-center space-x-6 mt-12">
+      <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mt-10 sm:mt-12">
 
 {[
   {
