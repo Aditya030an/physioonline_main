@@ -10,25 +10,31 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 const allowedOrigins = [
-  "http://localhost:5174",
   "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5000",
   "https://movementrehab.in",
   "https://www.movementrehab.in",
+  "https://physioonline-main.vercel.app",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Request Origin:", origin);
+
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 app.use(express.json());
 
