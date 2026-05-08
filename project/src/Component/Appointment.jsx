@@ -130,6 +130,8 @@ const PhysioAppointmentForm = () => {
     if (value === "Clinic Visit") {
       setTimeSlots([
         // Morning - Movement Rehab Center
+        { time: "09:00 AM", clinic: "Movement Rehab Center" },
+        { time: "09:30 AM", clinic: "Movement Rehab Center" },
         { time: "10:00 AM", clinic: "Movement Rehab Center" },
         { time: "10:30 AM", clinic: "Movement Rehab Center" },
         { time: "11:00 AM", clinic: "Movement Rehab Center" },

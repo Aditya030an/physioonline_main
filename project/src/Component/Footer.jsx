@@ -77,7 +77,7 @@ const Footer = () => {
 
             <li className="flex items-center gap-2">
               <FaEnvelope className="text-[#00C4CD]" />
-              info@movementrehab.in
+              movementrehab.in@gmail.com
             </li>
 
             <li className="flex items-start">
