@@ -324,6 +324,21 @@ Landmark: ${data.landmark || ""}
       },
     };
 
+    const existingEvents = await calendar.events.list({
+  calendarId: "primary",
+  timeMin: startDateTime.toISOString(),
+  timeMax: endDateTime.toISOString(),
+  singleEvents: true,
+  orderBy: "startTime",
+});
+
+if (existingEvents.data.items.length > 0) {
+  return res.status(409).json({
+    success: false,
+    message: "This time slot is already booked. Please select another slot.",
+  });
+}
+
     const response = await calendar.events.insert({
       calendarId: "primary",
       resource: event,
@@ -388,6 +403,53 @@ Landmark: ${data.landmark || ""}
     res.status(500).json({
       success: false,
       message: "Failed to book appointment",
+    });
+  }
+});
+
+userAppointmentRouter.get("/booked-slots", async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({
+        success: false,
+        message: "Date is required",
+      });
+    }
+
+    const startOfDay = new Date(`${date}T00:00:00+05:30`);
+    const endOfDay = new Date(`${date}T23:59:59+05:30`);
+
+    const response = await calendar.events.list({
+      calendarId: "primary",
+      timeMin: startOfDay.toISOString(),
+      timeMax: endOfDay.toISOString(),
+      singleEvents: true,
+      orderBy: "startTime",
+    });
+
+    const bookedSlots = response.data.items.map((event) => {
+      const start = new Date(event.start.dateTime);
+
+      return start.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      bookedSlots,
+    });
+  } catch (error) {
+    console.error("Booked Slots Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch booked slots",
     });
   }
 });

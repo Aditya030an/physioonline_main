@@ -22,6 +22,42 @@ const PhysioAppointmentForm = () => {
     agree: false,
   });
 
+  const [bookedSlots, setBookedSlots] = useState([]);
+
+  const fetchBookedSlots = async (date) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/bookAppointment/booked-slots?date=${date}`,
+      );
+
+      const data = await res.json();
+
+      console.log("booked slot", data);
+
+      if (data.success) {
+        setBookedSlots(data.bookedSlots);
+      }
+    } catch (error) {
+      console.error("Booked slots error:", error);
+    }
+  };
+
+  const normalizeTime = (time) => {
+    return time.trim().toLowerCase();
+  };
+
+  const isBookedSlot = (slot) => {
+    const slotTime = getSlotTime(slot);
+    return bookedSlots.some(
+      (bookedTime) => normalizeTime(bookedTime) === normalizeTime(slotTime),
+    );
+  };
+
+  // const isBookedSlot = (slot) => {
+  //   const slotTime = getSlotTime(slot);
+  //   return bookedSlots.includes(slotTime);
+  // };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -285,7 +321,9 @@ const PhysioAppointmentForm = () => {
                       {number}
                     </div>
 
-                    <span className="text-xs sm:text-sm md:text-base">{label}</span>
+                    <span className="text-xs sm:text-sm md:text-base">
+                      {label}
+                    </span>
                   </div>
                 );
               })}
@@ -312,7 +350,9 @@ const PhysioAppointmentForm = () => {
                     className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
                   {errors.patientName && (
-                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.patientName}</p>
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.patientName}
+                    </p>
                   )}
 
                   <input
@@ -356,7 +396,9 @@ const PhysioAppointmentForm = () => {
                     className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
                   {errors.mobile && (
-                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.mobile}</p>
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.mobile}
+                    </p>
                   )}
 
                   <input
@@ -383,10 +425,25 @@ const PhysioAppointmentForm = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                  <input
+                  {/* <input
                     name="appointmentDate"
                     value={formData.appointmentDate}
                     onChange={handleChange}
+                    type="date"
+                    min={today}
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                  /> */}
+                  <input
+                    name="appointmentDate"
+                    value={formData.appointmentDate}
+                    onChange={(e) => {
+                      handleChange(e);
+                      fetchBookedSlots(e.target.value);
+                      setFormData((prev) => ({
+                        ...prev,
+                        timeSlot: "",
+                      }));
+                    }}
                     type="date"
                     min={today}
                     className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
@@ -469,10 +526,16 @@ const PhysioAppointmentForm = () => {
                               <option
                                 key={i}
                                 value={slot.time}
-                                disabled={isPastTimeSlot(slot)}
+                                disabled={
+                                  isPastTimeSlot(slot) || isBookedSlot(slot)
+                                }
                               >
                                 {slot.time}{" "}
-                                {isPastTimeSlot(slot) ? "(Not available)" : ""}
+                                {isPastTimeSlot(slot)
+                                  ? "(Not available)"
+                                  : isBookedSlot(slot)
+                                    ? "(Booked)"
+                                    : ""}
                               </option>
                             ))}
                         </optgroup>
@@ -486,10 +549,16 @@ const PhysioAppointmentForm = () => {
                               <option
                                 key={i}
                                 value={slot.time}
-                                disabled={isPastTimeSlot(slot)}
+                                disabled={
+                                  isPastTimeSlot(slot) || isBookedSlot(slot)
+                                }
                               >
                                 {slot.time}{" "}
-                                {isPastTimeSlot(slot) ? "(Not available)" : ""}
+                                {isPastTimeSlot(slot)
+                                  ? "(Not available)"
+                                  : isBookedSlot(slot)
+                                    ? "(Booked)"
+                                    : ""}
                               </option>
                             ))}
                         </optgroup>
@@ -502,10 +571,16 @@ const PhysioAppointmentForm = () => {
                           <option
                             key={i}
                             value={slotTime}
-                            disabled={isPastTimeSlot(slot)}
+                            disabled={
+                              isPastTimeSlot(slot) || isBookedSlot(slot)
+                            }
                           >
                             {slotTime}{" "}
-                            {isPastTimeSlot(slot) ? "(Not available)" : ""}
+                            {isPastTimeSlot(slot)
+                              ? "(Not available)"
+                              : isBookedSlot(slot)
+                                ? "(Booked)"
+                                : ""}
                           </option>
                         );
                       })
@@ -513,7 +588,9 @@ const PhysioAppointmentForm = () => {
                   </select>
 
                   {errors.timeSlot && (
-                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.timeSlot}</p>
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.timeSlot}
+                    </p>
                   )}
                 </div>
               </div>
@@ -536,7 +613,9 @@ const PhysioAppointmentForm = () => {
                     className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                   />
                   {errors.complaint && (
-                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.complaint}</p>
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.complaint}
+                    </p>
                   )}
 
                   <select
@@ -625,7 +704,9 @@ const PhysioAppointmentForm = () => {
                       className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                     />
                     {errors.address && (
-                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.address}</p>
+                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                        {errors.address}
+                      </p>
                     )}
 
                     <input
@@ -636,7 +717,9 @@ const PhysioAppointmentForm = () => {
                       className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
                     />
                     {errors.city && (
-                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.city}</p>
+                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                        {errors.city}
+                      </p>
                     )}
 
                     <input
@@ -648,12 +731,17 @@ const PhysioAppointmentForm = () => {
                     />
 
                     {errors.landmark && (
-                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">{errors.landmark}</p>
+                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                        {errors.landmark}
+                      </p>
                     )}
                   </div>
                 )}
 
-                <input type="file" className="mb-6 w-full rounded-lg border p-3" />
+                <input
+                  type="file"
+                  className="mb-6 w-full rounded-lg border p-3"
+                />
 
                 <label className="flex items-start gap-3 mb-8 text-sm sm:text-base">
                   <input
@@ -679,7 +767,10 @@ const PhysioAppointmentForm = () => {
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between mt-10">
               {step > 1 && (
-                <button onClick={back} className="w-full sm:w-auto border px-6 py-3 rounded-lg">
+                <button
+                  onClick={back}
+                  className="w-full sm:w-auto border px-6 py-3 rounded-lg"
+                >
                   Back
                 </button>
               )}
