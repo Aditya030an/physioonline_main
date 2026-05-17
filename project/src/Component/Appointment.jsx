@@ -24,6 +24,9 @@ const PhysioAppointmentForm = () => {
 
   const [bookedSlots, setBookedSlots] = useState([]);
 
+  const isFollowUp = formData.visitType === "Follow-up";
+  const totalSteps = isFollowUp ? 2 : 5;
+
   const fetchBookedSlots = async (date) => {
     try {
       const res = await fetch(
@@ -52,11 +55,6 @@ const PhysioAppointmentForm = () => {
       (bookedTime) => normalizeTime(bookedTime) === normalizeTime(slotTime),
     );
   };
-
-  // const isBookedSlot = (slot) => {
-  //   const slotTime = getSlotTime(slot);
-  //   return bookedSlots.includes(slotTime);
-  // };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -148,9 +146,14 @@ const PhysioAppointmentForm = () => {
   };
 
   const next = () => {
-    if (validateStep()) {
-      setStep((prev) => prev + 1);
+    if (!validateStep()) return;
+
+    if (isFollowUp && step === 2) {
+      handleSubmit();
+      return;
     }
+
+    setStep((prev) => prev + 1);
   };
   const back = () => setStep(step - 1);
 
@@ -302,29 +305,34 @@ const PhysioAppointmentForm = () => {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 md:block md:space-y-6">
               {[
-                "Patient Details",
-                "Appointment",
-                "Medical Info",
-                "Functional Info",
-                "Upload & Submit",
+                { name: "Patient Details", step: 1 },
+                { name: "Appointment", step: 2 },
+                ...(!isFollowUp
+                  ? [
+                      { name: "Medical Info", step: 3 },
+                      { name: "Functional Info", step: 4 },
+                      { name: "Upload & Submit", step: 5 },
+                    ]
+                  : []),
               ].map((label, index) => {
                 const number = index + 1;
 
                 return (
-                  <div
+                  <button
                     key={index}
-                    className={`flex items-center gap-2 md:gap-4 ${
+                    className={`flex items-center cursor-pointer gap-2 md:gap-4 ${
                       step === number ? "opacity-100" : "opacity-50"
                     }`}
+                    onClick={() => setStep(label?.step)}
                   >
                     <div className="w-7 h-7 shrink-0 bg-white text-black rounded-full flex items-center justify-center text-sm">
                       {number}
                     </div>
 
                     <span className="text-xs sm:text-sm md:text-base">
-                      {label}
+                      {label?.name}
                     </span>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -425,14 +433,6 @@ const PhysioAppointmentForm = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                  {/* <input
-                    name="appointmentDate"
-                    value={formData.appointmentDate}
-                    onChange={handleChange}
-                    type="date"
-                    min={today}
-                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
-                  /> */}
                   <input
                     name="appointmentDate"
                     value={formData.appointmentDate}
@@ -467,44 +467,6 @@ const PhysioAppointmentForm = () => {
                       Online Consultation
                     </option>
                   </select>
-
-                  {/* <select
-                    name="timeSlot"
-                    value={formData.timeSlot}
-                    onChange={handleChange}
-                    disabled={!formData.mode}
-                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
-                  >
-                    <option value="">Select Time Slot</option>
-
-                    {mode === "Clinic Visit" ? (
-                      <>
-                        <optgroup label="Morning - MOVEMENT REHAB CENTER">
-                          {timeSlots
-                            .filter(
-                              (slot) => slot.clinic === "Movement Rehab Center",
-                            )
-                            .map((slot, i) => (
-                              <option key={i}>{slot.time}</option>
-                            ))}
-                        </optgroup>
-
-                        <optgroup label="Evening - MAYA'S BODY CARE">
-                          {timeSlots
-                            .filter(
-                              (slot) => slot.clinic === "MAYA'S BODY CARE",
-                            )
-                            .map((slot, i) => (
-                              <option key={i}>{slot.time}</option>
-                            ))}
-                        </optgroup>
-                      </>
-                    ) : (
-                      timeSlots.map((slot, i) => (
-                        <option key={i}>{slot.time}</option>
-                      ))
-                    )}
-                  </select> */}
 
                   <select
                     name="timeSlot"
@@ -591,6 +553,45 @@ const PhysioAppointmentForm = () => {
                     <p className="-mt-3 text-red-500 text-sm md:col-span-2">
                       {errors.timeSlot}
                     </p>
+                  )}
+
+                  {formData.mode === "Home Visit" && formData.visitType === "Follow-up" && (
+                    <div className="md:col-span-2 space-y-4 mt-2">
+                      <input
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        placeholder="Address"
+                        className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                      />
+                      {errors.address && (
+                        <p className="text-red-500 text-sm">{errors.address}</p>
+                      )}
+
+                      <input
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        placeholder="City"
+                        className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                      />
+                      {errors.city && (
+                        <p className="text-red-500 text-sm">{errors.city}</p>
+                      )}
+
+                      <input
+                        name="landmark"
+                        value={formData.landmark}
+                        onChange={handleChange}
+                        placeholder="Landmark"
+                        className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                      />
+                      {errors.landmark && (
+                        <p className="text-red-500 text-sm">
+                          {errors.landmark}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -694,49 +695,49 @@ const PhysioAppointmentForm = () => {
                   Upload Reports
                 </h2>
 
-                {formData.mode === "Home Visit" && (
-                  <div className="space-y-4 mb-6">
-                    <input
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      placeholder="Address"
-                      className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
-                    />
-                    {errors.address && (
-                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">
-                        {errors.address}
-                      </p>
-                    )}
+                <div className="space-y-4 mb-6">
+                  <input
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Address"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                  />
+                  {errors.address && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.address}
+                    </p>
+                  )}
 
-                    <input
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      placeholder="City"
-                      className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
-                    />
-                    {errors.city && (
-                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">
-                        {errors.city}
-                      </p>
-                    )}
+                  <input
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="City"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                  />
+                  {errors.city && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.city}
+                    </p>
+                  )}
 
-                    <input
-                      name="landmark"
-                      value={formData.landmark}
-                      onChange={handleChange}
-                      placeholder="Landmark"
-                      className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
-                    />
+                  <input
+                    name="landmark"
+                    value={formData.landmark}
+                    onChange={handleChange}
+                    placeholder="Landmark"
+                    className="w-full border rounded-lg p-3 outline-none focus:border-[#003A80]"
+                  />
 
-                    {errors.landmark && (
-                      <p className="-mt-3 text-red-500 text-sm md:col-span-2">
-                        {errors.landmark}
-                      </p>
-                    )}
-                  </div>
-                )}
+                  {errors.landmark && (
+                    <p className="-mt-3 text-red-500 text-sm md:col-span-2">
+                      {errors.landmark}
+                    </p>
+                  )}
+                </div>
+                {/* {formData.mode === "Home Visit" && (
+                )} */}
 
                 <input
                   type="file"
@@ -753,13 +754,13 @@ const PhysioAppointmentForm = () => {
                   I agree to physiotherapy treatment policies
                 </label>
 
-                <button
+                {/* <button
                   onClick={handleSubmit}
                   disabled={loading}
                   className="w-full sm:w-auto bg-[#003A80] text-white px-8 py-3 rounded-lg disabled:opacity-60 hover:bg-[#002a5e]"
                 >
                   {loading ? "Submitting..." : "Submit Appointment"}
-                </button>
+                </button> */}
               </div>
             )}
 
@@ -775,12 +776,22 @@ const PhysioAppointmentForm = () => {
                 </button>
               )}
 
-              {step < 5 && (
+              {step < totalSteps && (
                 <button
                   onClick={next}
                   className="w-full sm:w-auto bg-[#003A80] text-white px-6 py-3 rounded-lg hover:bg-[#002a5e]"
                 >
                   Next
+                </button>
+              )}
+
+              {step === totalSteps && (
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="w-full sm:w-auto bg-[#003A80] text-white px-6 py-3 rounded-lg disabled:opacity-60 hover:bg-[#002a5e]"
+                >
+                  {loading ? "Submitting..." : "Submit Appointment"}
                 </button>
               )}
             </div>
