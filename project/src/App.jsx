@@ -14,6 +14,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Blogs from "./Component/Blogs.jsx";
+import ProtectedRoute from "./Component/ProtectedRoute.jsx";
+import OwnerLogin from "./Component/OwnerLogin.jsx";
+import AdminBlogUpload from "./Component/AdminBlogUpload.jsx";
 
 import chatbot from "./Component/Chatbot.jsx";
 function App() {
@@ -32,6 +35,16 @@ function App() {
           <Route path="Service" element={<Service />} />
 
           <Route path="Blogs" element={<Blogs />} />
+          <Route path="/owner-login" element={<OwnerLogin />} />
+
+          <Route
+            path="/admin/blog-upload"
+            element={
+              <ProtectedRoute>
+                <AdminBlogUpload />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="chatbot" element={<chatbot />} />
 
